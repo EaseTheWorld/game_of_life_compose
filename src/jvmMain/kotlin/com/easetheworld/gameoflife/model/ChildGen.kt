@@ -1,6 +1,5 @@
 package com.easetheworld.gameoflife.model
 
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import kotlin.math.max
 import kotlin.math.min
@@ -8,11 +7,15 @@ import kotlin.math.min
 class ChildGen(
     override val h: Int,
     override val w: Int,
-    private val parent: Gen
+    private val parent: Gen,
+    private val name: String? = null
     ): Gen {
     private val data = Array(h) { y ->
         Array(w) { x ->
-            ChildCell(parent.cell(y, x), parent.neighbors(y, x))
+            ChildCell(
+                parent.cell(y, x), parent.neighbors(y, x),
+                name="$name($y,$x)"
+            )
         }
     }
 
@@ -21,9 +24,13 @@ class ChildGen(
     class ChildCell(
         private val prevSelf: Cell,
         private val prevNeighbors: Set<Cell>,
+        private val name: String? = null
     ): Cell {
         override val life = derivedStateOf {
-            calculate()
+            val ret = calculate()
+            if (name != null)
+                println("calculate $name $ret")
+            ret
         }
 
         private fun calculate(): Boolean {
@@ -50,6 +57,6 @@ private fun Gen.neighbors(y: Int, x: Int): Set<Cell> {
     }
 }
 
-fun Gen.populate(): Gen {
-    return ChildGen(h, w, this)
+fun Gen.populate(name: String? = null): Gen {
+    return ChildGen(h, w, this, name)
 }
