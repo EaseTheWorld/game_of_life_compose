@@ -4,35 +4,34 @@ import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.*
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import com.easetheworld.gameoflife.model.Gen
 import com.easetheworld.gameoflife.model.createGenList
-import com.easetheworld.gameoflife.view.GenView
+import com.easetheworld.gameoflife.view.LazyGenView
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 @Preview
 fun App(gens: List<Gen>) {
     MaterialTheme {
-        LazyVerticalGrid(
-            cells = GridCells.Fixed(4),
+        Row(
             horizontalArrangement = Arrangement.spacedBy(20.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp),
             modifier = Modifier.padding(20.dp)
         ) {
-            itemsIndexed(gens) { index, grid ->
+            gens.forEachIndexed { index, grid ->
                 Column {
                     Text("$index gen")
-                    GenView(grid)
+                    LazyGenView(grid)
                 }
             }
         }
@@ -40,9 +39,9 @@ fun App(gens: List<Gen>) {
 }
 
 fun main() = application {
-    val h = 15
+    val h = 20
     val w = 15
-    val age = 8
+    val age = 7
     val gens = remember {
         Gen.createGenList(h, w, age) {
             val y = h/2
@@ -54,7 +53,7 @@ fun main() = application {
     }
     Window(
         title = "Game of Life",
-        state = rememberWindowState(width = 1200.dp, height = 700.dp),
+        state = rememberWindowState(width = Dp.Unspecified, height = Dp.Unspecified),
         onCloseRequest = ::exitApplication,
     ) {
         App(gens)
